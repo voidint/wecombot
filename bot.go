@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 // Bot 企业微信群机器人
@@ -186,3 +187,12 @@ const (
 	// TemplateCardMsgType 模板卡片类型
 	TemplateCardMsgType MsgType = "template_card"
 )
+
+// ExtractKey 返回 webhook 中包含的 key 信息。若 URL 地址无效，或 URL 中不包含 key 参数，则返回空字符串。
+func ExtractKey(webhookURL string) (key string) {
+	one, err := url.Parse(webhookURL)
+	if err != nil {
+		return ""
+	}
+	return one.Query().Get("key")
+}
