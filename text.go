@@ -15,16 +15,16 @@ type TextMessage struct {
 }
 
 // WithMentionedList 设置被提醒的 userid 列表
-func WithMentionedList(list []string) func(*TextMessage) {
+func WithMentionedList(userid ...string) func(*TextMessage) {
 	return func(msg *TextMessage) {
-		msg.Text.MentionedList = list
+		msg.Text.MentionedList = userid
 	}
 }
 
 // WithMentionedMobileList 设置被提醒的手机号列表
-func WithMentionedMobileList(list []string) func(*TextMessage) {
+func WithMentionedMobileList(mobile ...string) func(*TextMessage) {
 	return func(msg *TextMessage) {
-		msg.Text.MentionedMobileList = list
+		msg.Text.MentionedMobileList = mobile
 	}
 }
 
