@@ -166,3 +166,23 @@ func (e *ResError) ErrMsg() string {
 func (e *ResError) Error() string {
 	return fmt.Sprintf("[%d]%s", e.errCode, e.errMsg)
 }
+
+// MsgType 消息类型
+type MsgType string
+
+const (
+	// TextMsgType 文本类型
+	TextMsgType MsgType = "text"
+	// MarkdownMsgType Markdown 类型
+	MarkdownMsgType MsgType = "markdown"
+	// ImageMsgType 图片类型
+	ImageMsgType MsgType = "image"
+	// NewsMsgType 图文类型
+	NewsMsgType MsgType = "news"
+	// FileMsgType 文件类型
+	FileMsgType MsgType = "file"
+	// VoiceMsgType 语音类型
+	VoiceMsgType MsgType = "voice"
+	// TemplateCardMsgType 模板卡片类型
+	TemplateCardMsgType MsgType = "template_card"
+)

@@ -3,7 +3,7 @@ package wecombot
 // TextMessage 文本类型消息。详见 https://developer.work.weixin.qq.com/document/path/91770#%E6%96%87%E6%9C%AC%E7%B1%BB%E5%9E%8B
 type TextMessage struct {
 	// MsgType 必填。消息类型，此时固定为：text。
-	MsgType string `json:"msgtype"`
+	MsgType MsgType `json:"msgtype"`
 	Text    struct {
 		// Content 必填。文本内容，最长不超过2048个字节，必须是utf8编码。
 		Content string `json:"content"`
@@ -30,14 +30,13 @@ func WithMentionedMobileList(list []string) func(*TextMessage) {
 
 // SendTextMessage 发送文本消息
 func (bot *Bot) SendTextMessage(msg *TextMessage) error {
+	msg.MsgType = TextMsgType
 	return bot.send(msg)
 }
 
 // SendText 发送文本消息
 func (bot *Bot) SendText(content string, opts ...func(*TextMessage)) (err error) {
-	msg := TextMessage{
-		MsgType: "text",
-	}
+	var msg TextMessage
 	for _, setter := range opts {
 		setter(&msg)
 	}
