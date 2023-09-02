@@ -1,10 +1,9 @@
 package wecombot
 
 import (
-	"bytes"
 	"crypto/md5"
 	"encoding/base64"
-	"fmt"
+	"encoding/hex"
 	"io"
 )
 
@@ -29,24 +28,20 @@ func (bot *Bot) SendImageMessage(msg *ImageMessage) (err error) {
 
 // SendImage 发送图片消息
 func (bot *Bot) SendImage(f io.Reader) (err error) {
-	var buf *bytes.Buffer
-	if bot.threadSafe {
-		buf = bytes.NewBuffer(nil)
-	} else {
-		buf = bot.reqbuf
-	}
-
-	tee := io.TeeReader(f, buf)
-	h := md5.New()
-	if _, err = io.Copy(h, tee); err != nil {
-		buf.Reset()
+	data, err := io.ReadAll(f)
+	if err != nil {
 		return err
 	}
+	return bot.SendImageBytes(data)
+}
+
+// SendImageBytes 发送图片消息
+func (bot *Bot) SendImageBytes(img []byte) (err error) {
+	sum := md5.Sum(img)
 
 	var msg ImageMessage
-	msg.Image.Md5 = fmt.Sprintf("%x", h.Sum(nil))
-	msg.Image.Base64 = base64.StdEncoding.EncodeToString(buf.Bytes())
-	buf.Reset() // 确保先清除
+	msg.Image.Md5 = hex.EncodeToString(sum[:])
+	msg.Image.Base64 = base64.StdEncoding.EncodeToString(img)
 
 	return bot.SendImageMessage(&msg)
 }
