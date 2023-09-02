@@ -1,6 +1,9 @@
 package wecombot
 
-import "io"
+import (
+	"bytes"
+	"io"
+)
 
 // VoiceMessage 语音类型消息。详见 https://developer.work.weixin.qq.com/document/path/91770#%E8%AF%AD%E9%9F%B3%E7%B1%BB%E5%9E%8B
 type VoiceMessage struct {
@@ -30,4 +33,9 @@ func (bot *Bot) SendVoice(f io.Reader, filename string, fileLength int64) (err e
 	msg.Voice.MediaID = ret.MediaID
 
 	return bot.SendVoiceMessage(&msg)
+}
+
+// SendVoiceBytes 发送语音
+func (bot *Bot) SendVoiceBytes(f []byte, filename string, fileLength int64) (err error) {
+	return bot.SendVoice(bytes.NewReader(f), filename, fileLength)
 }

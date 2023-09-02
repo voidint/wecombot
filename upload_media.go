@@ -58,6 +58,11 @@ func (bot *Bot) UploadMedia(tpe FileType, f io.Reader, filename string, fileLeng
 	return &resData, nil
 }
 
+// UploadMediaBytes 文件上传
+func (bot *Bot) UploadMediaBytes(tpe FileType, f []byte, filename string, fileLength int64) (*UploadedMedia, error) {
+	return bot.UploadMedia(tpe, bytes.NewReader(f), filename, fileLength)
+}
+
 // UploadedMedia 上传媒体文件结果
 type UploadedMedia struct {
 	resData

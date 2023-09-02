@@ -1,6 +1,9 @@
 package wecombot
 
-import "io"
+import (
+	"bytes"
+	"io"
+)
 
 // FileMessage 文件类型消息。详见 https://developer.work.weixin.qq.com/document/path/91770#%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B
 type FileMessage struct {
@@ -30,4 +33,9 @@ func (bot *Bot) SendFile(f io.Reader, filename string, fileLength int64) (err er
 	msg.File.MediaID = ret.MediaID
 
 	return bot.SendFileMessage(&msg)
+}
+
+// SendFileBytes 发送文件
+func (bot *Bot) SendFileBytes(f []byte, filename string, fileLength int64) (err error) {
+	return bot.SendFile(bytes.NewBuffer(f), filename, fileLength)
 }
