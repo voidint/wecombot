@@ -7,7 +7,7 @@ wecombot 是[企业微信群机器人](https://developer.work.weixin.qq.com/docu
 
 ## 安装
 ```sehll
-$ go get -u -v github.com/voidint/wecombot@latest
+$ go get github.com/voidint/wecombot@latest
 ```
 
 
@@ -157,7 +157,7 @@ func main() {
 	msg.TemplateCard.MainTitle.Desc = takePointer("您的好友正在邀请您加入企业微信")
 	msg.TemplateCard.CardAction.Type = 1
 	msg.TemplateCard.CardAction.URL = takePointer("https://work.weixin.qq.com/?from=openApi")
-    // 参数较多，详见文档。
+	// 参数较多，详见文档。
 
 	wecombot.NewBot("YOUR_KEY").SendTextNoticeTemplateCardMessage(&msg)
 }

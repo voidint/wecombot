@@ -132,9 +132,9 @@ type Jump struct {
 type CardAction struct {
 	// Type 卡片跳转类型，1 代表跳转url，2 代表打开小程序。
 	Type uint8 `json:"type"`
-	// URL 跳转事件的url，card_action.type是1时必填。
+	// URL 跳转事件的url，type是1时必填。
 	URL *string `json:"url"`
-	// AppID 跳转事件的小程序的appid，card_action.type是2时必填。
+	// AppID 跳转事件的小程序的appid，type是2时必填。
 	AppID *string `json:"appid"`
 	// PagePath 跳转事件的小程序的pagepath，type是2时选填。
 	PagePath *string `json:"pagepath"`
