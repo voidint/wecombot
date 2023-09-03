@@ -17,8 +17,8 @@ type Bot struct {
 	threadSafe     bool
 	reqbuf, resbuf *bytes.Buffer
 	client         *http.Client
-	marshal        func(v any) ([]byte, error)
-	unmarshal      func(data []byte, v any) error
+	marshal        func(v interface{}) ([]byte, error)
+	unmarshal      func(data []byte, v interface{}) error
 }
 
 // NewBot 返回企业微信群机器人实例
@@ -58,14 +58,14 @@ func WithHttpClient(c *http.Client) func(*Bot) {
 }
 
 // WithMarshal 设置序列化函数实现
-func WithMarshal(f func(v any) ([]byte, error)) func(*Bot) {
+func WithMarshal(f func(v interface{}) ([]byte, error)) func(*Bot) {
 	return func(bot *Bot) {
 		bot.marshal = f
 	}
 }
 
 // WithUnmarshal 设置反序列化函数实现
-func WithUnmarshal(f func(data []byte, v any) error) func(*Bot) {
+func WithUnmarshal(f func(data []byte, v interface{}) error) func(*Bot) {
 	return func(bot *Bot) {
 		bot.unmarshal = f
 	}
@@ -75,7 +75,7 @@ var jsonReqHeader = map[string]string{
 	"Content-Type": "application/json",
 }
 
-func (bot *Bot) send(msg any) error {
+func (bot *Bot) send(msg interface{}) error {
 	data, err := bot.marshal(msg)
 	if err != nil {
 		return err
@@ -97,7 +97,7 @@ func (bot *Bot) send(msg any) error {
 	return resData.ToError()
 }
 
-func (bot *Bot) doPost(url string, reqHeader map[string]string, reqBody io.Reader, resData any) error {
+func (bot *Bot) doPost(url string, reqHeader map[string]string, reqBody io.Reader, resData interface{}) error {
 	req, err := http.NewRequest(http.MethodPost, url, reqBody)
 	if err != nil {
 		return err
