@@ -37,6 +37,8 @@ func (bot *Bot) SendTextMessage(msg *TextMessage) error {
 // SendText 发送文本消息
 func (bot *Bot) SendText(content string, opts ...func(*TextMessage)) (err error) {
 	var msg TextMessage
+	msg.Text.Content = content
+
 	for _, setter := range opts {
 		setter(&msg)
 	}
