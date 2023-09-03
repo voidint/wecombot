@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
-	"io"
 )
 
 // ImageMessage 图片类型消息。详见 https://developer.work.weixin.qq.com/document/path/91770#%E5%9B%BE%E7%89%87%E7%B1%BB%E5%9E%8B
@@ -26,17 +25,8 @@ func (bot *Bot) SendImageMessage(msg *ImageMessage) (err error) {
 	return bot.send(msg)
 }
 
-// SendImage 发送图片消息
-func (bot *Bot) SendImage(f io.Reader) (err error) {
-	data, err := io.ReadAll(f)
-	if err != nil {
-		return err
-	}
-	return bot.SendImageBytes(data)
-}
-
 // SendImageBytes 发送图片消息
-func (bot *Bot) SendImageBytes(img []byte) (err error) {
+func (bot *Bot) SendImage(img []byte) (err error) {
 	sum := md5.Sum(img)
 
 	var msg ImageMessage
