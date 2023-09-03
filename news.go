@@ -32,6 +32,5 @@ func (bot *Bot) SendNewsMessage(msg *NewsMessage) (err error) {
 func (bot *Bot) SendNews(articles ...*Article) (err error) {
 	var msg NewsMessage
 	msg.News.Articles = articles
-
 	return bot.SendNewsMessage(&msg)
 }

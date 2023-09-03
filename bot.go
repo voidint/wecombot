@@ -14,11 +14,9 @@ type Bot struct {
 	webhookURL string
 	key        string
 
-	threadSafe     bool
-	reqbuf, resbuf *bytes.Buffer
-	client         *http.Client
-	marshal        func(v interface{}) ([]byte, error)
-	unmarshal      func(data []byte, v interface{}) error
+	threadSafe bool
+	reqbuf     *bytes.Buffer
+	client     *http.Client
 }
 
 // NewBot 返回企业微信群机器人实例
@@ -27,8 +25,6 @@ func NewBot(key string, opts ...func(*Bot)) *Bot {
 		webhookURL: fmt.Sprintf("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=%s", key),
 		key:        key,
 		client:     http.DefaultClient,
-		marshal:    json.Marshal,
-		unmarshal:  json.Unmarshal,
 	}
 
 	for _, setter := range opts {
@@ -37,7 +33,6 @@ func NewBot(key string, opts ...func(*Bot)) *Bot {
 
 	if !bot.threadSafe {
 		bot.reqbuf = bytes.NewBuffer(nil)
-		bot.resbuf = bytes.NewBuffer(nil)
 	}
 
 	return &bot
@@ -57,38 +52,22 @@ func WithHttpClient(c *http.Client) func(*Bot) {
 	}
 }
 
-// WithMarshal 设置序列化函数实现
-func WithMarshal(f func(v interface{}) ([]byte, error)) func(*Bot) {
-	return func(bot *Bot) {
-		bot.marshal = f
-	}
-}
-
-// WithUnmarshal 设置反序列化函数实现
-func WithUnmarshal(f func(data []byte, v interface{}) error) func(*Bot) {
-	return func(bot *Bot) {
-		bot.unmarshal = f
-	}
-}
-
 var jsonReqHeader = map[string]string{
 	"Content-Type": "application/json",
 }
 
-func (bot *Bot) send(msg interface{}) error {
-	data, err := bot.marshal(msg)
-	if err != nil {
-		return err
-	}
-
+func (bot *Bot) send(msg interface{}) (err error) {
 	var reqBody *bytes.Buffer
 	if bot.threadSafe {
-		reqBody = bytes.NewBuffer(data)
+		reqBody = bytes.NewBuffer(nil)
 	} else {
 		reqBody = bot.reqbuf
-		reqBody.Write(data)
 	}
 	defer reqBody.Reset()
+
+	if err = json.NewEncoder(reqBody).Encode(msg); err != nil {
+		return err
+	}
 
 	var resData resData
 	if err = bot.doPost(bot.webhookURL, jsonReqHeader, reqBody, &resData); err != nil {
@@ -112,19 +91,7 @@ func (bot *Bot) doPost(url string, reqHeader map[string]string, reqBody io.Reade
 	}
 	defer res.Body.Close()
 
-	var resbuf *bytes.Buffer
-	if bot.threadSafe {
-		resbuf = new(bytes.Buffer)
-	} else {
-		resbuf = bot.resbuf
-	}
-	defer resbuf.Reset()
-
-	if _, err = io.Copy(resbuf, res.Body); err != nil { // TODO 优化这次多余的拷贝
-		return err
-	}
-
-	return bot.unmarshal(resbuf.Bytes(), resData)
+	return json.NewDecoder(res.Body).Decode(resData)
 }
 
 type resData struct {

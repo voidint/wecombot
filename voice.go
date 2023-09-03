@@ -26,6 +26,5 @@ func (bot *Bot) SendVoice(f []byte, filename string) (err error) {
 
 	var msg VoiceMessage
 	msg.Voice.MediaID = ret.MediaID
-
 	return bot.SendVoiceMessage(&msg)
 }

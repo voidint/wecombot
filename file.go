@@ -26,6 +26,5 @@ func (bot *Bot) SendFile(f []byte, filename string) (err error) {
 
 	var msg FileMessage
 	msg.File.MediaID = ret.MediaID
-
 	return bot.SendFileMessage(&msg)
 }

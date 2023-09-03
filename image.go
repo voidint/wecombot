@@ -32,6 +32,5 @@ func (bot *Bot) SendImage(img []byte) (err error) {
 	var msg ImageMessage
 	msg.Image.Md5 = hex.EncodeToString(sum[:])
 	msg.Image.Base64 = base64.StdEncoding.EncodeToString(img)
-
 	return bot.SendImageMessage(&msg)
 }

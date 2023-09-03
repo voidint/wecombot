@@ -40,6 +40,5 @@ func (bot *Bot) SendText(content string, opts ...func(*TextMessage)) (err error)
 	for _, setter := range opts {
 		setter(&msg)
 	}
-
 	return bot.SendTextMessage(&msg)
 }

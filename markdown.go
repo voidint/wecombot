@@ -21,6 +21,5 @@ func (bot *Bot) SendMarkdownMessage(msg *MarkdownMessage) (err error) {
 func (bot *Bot) SendMarkdown(content string) (err error) {
 	var msg MarkdownMessage
 	msg.Markdown.Content = content
-
 	return bot.SendMarkdownMessage(&msg)
 }
