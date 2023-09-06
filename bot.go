@@ -76,6 +76,11 @@ func (bot *Bot) send(msg interface{}) (err error) {
 	return resData.ToError()
 }
 
+// isSuccess 返回 http 请求是否成功
+func isSuccess(statusCode int) bool {
+	return statusCode >= http.StatusOK && statusCode < http.StatusMultipleChoices
+}
+
 func (bot *Bot) doPost(url string, reqHeader map[string]string, reqBody io.Reader, resData interface{}) error {
 	req, err := http.NewRequest(http.MethodPost, url, reqBody)
 	if err != nil {
@@ -90,6 +95,10 @@ func (bot *Bot) doPost(url string, reqHeader map[string]string, reqBody io.Reade
 		return err
 	}
 	defer res.Body.Close()
+
+	if !isSuccess(res.StatusCode) {
+		return fmt.Errorf("server response abnormality: %d", res.StatusCode)
+	}
 
 	return json.NewDecoder(res.Body).Decode(resData)
 }
